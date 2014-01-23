@@ -1,0 +1,27 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                                        controllers.Application.index
+
+GET     /:type/init                              controllers.Application.initNodes(type: String, names: String)
+
+GET     /:type/:name/init                        controllers.Application.initGroups(type: String, name: String, groups: String)
+
+GET     /:type/:name/:group/init                 controllers.Application.initCharts(type: String, name: String, group: String, charts: String)
+
+GET     /:type/:name/:group/:chart/init          controllers.Application.initChart(type: String, name: String, group: String, chart: String, series: String, title: String, yAxisTitle: String)
+
+GET     /:type/:name/:group/:chart/ingest        controllers.Application.ingestData(type: String, name: String, group: String, chart: String, data: String)
+
+GET     /:type/:name/:group/charts               controllers.Application.showGroupCharts(type: String, name: String, group: String, pointsTotal: Int ?= 20)
+
+GET     /:type/:name/charts/index                controllers.Application.showNodeIndex(type: String, name: String)
+
+GET     /:type/:name/:group/:chart/data          controllers.Application.getData(type: String, name: String, group: String, chart: String, pointsTotal: Int)
+
+GET     /:type/:name/:group/:chart/socket        controllers.Application.getSocket(type: String, name: String, group: String, chart: String)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
