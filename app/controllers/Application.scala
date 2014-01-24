@@ -23,7 +23,7 @@ object Application extends Controller {
 
   object RuntimeAction extends ActionBuilder[Request] {
     def invokeBlock[A](request: Request[A], block: (Request[A]) => Future[SimpleResult]) = {
-      if (RealTimeChart.readyInfo == "")
+      if (RealTimeChart.readyInfo == "" || RealTimeChart.readyInfo == "clients")
         block(request)
       else
         Future.successful(Ok(views.html.error(RealTimeChart.readyInfo)))

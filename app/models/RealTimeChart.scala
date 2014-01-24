@@ -164,9 +164,11 @@ object RealTimeChart {
   def readyInfo = {
     if (servers.elements == Nil)
       "servers"
+    else if (clients.elements == Nil)
+      "clients"
     else {
       servers.readyInfo("server ") match {
-        case "" => if (clients.elements == Nil) "" else clients.readyInfo("client ")
+        case "" => clients.readyInfo("client ")
         case s: String => s
       }
     }
