@@ -137,23 +137,20 @@ case class Chart(name: String) {
 
 object RealTimeChart {
 
-  val SERVER = "server"
-  val CLIENT = "client"
-
   private val servers = new MyContainer[ComputerNode]()
   private val clients = new MyContainer[ComputerNode]()
 
   def setNodes(nodes: List[ComputerNode], nodeType: String) {
     nodeType match {
-      case SERVER => servers.setElements(nodes)
-      case CLIENT => clients.setElements(nodes)
+      case "server" => servers.setElements(nodes)
+      case "client" => clients.setElements(nodes)
     }
   }
 
   def getNode(name: String, nodeType: String) = {
     nodeType match {
-      case SERVER => servers.getElementByName(name)
-      case CLIENT => clients.getElementByName(name)
+      case "server" => servers.getElementByName(name)
+      case "client" => clients.getElementByName(name)
     }
   }
 
