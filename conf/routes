@@ -15,9 +15,9 @@ GET     /$type<server|client>/:name/:group/:chart/init          controllers.Appl
 
 GET     /$type<server|client>/:name/:group/:chart/ingest        controllers.Application.ingestData(type: String, name: String, group: String, chart: String, data: String)
 
-GET     /$type<server|client>/:name/:group/charts               controllers.Application.showGroupCharts(type: String, name: String, group: String, pointsTotal: Int ?= 20)
+GET     /$type<server|client>/:name/groups                      controllers.Application.showNodeIndex(type: String, name: String)
 
-GET     /$type<server|client>/:name/charts/index                controllers.Application.showNodeIndex(type: String, name: String)
+GET     /$type<server|client>/:name/:group/charts               controllers.Application.showGroupCharts(type: String, name: String, group: String, pointsTotal: Int ?= 20)
 
 GET     /$type<server|client>/:name/:group/:chart/data          controllers.Application.getData(type: String, name: String, group: String, chart: String, pointsTotal: Int)
 
