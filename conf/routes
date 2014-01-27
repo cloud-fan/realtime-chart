@@ -23,5 +23,7 @@ GET     /$type<server|client>/:name/:group/:chart/data          controllers.Appl
 
 GET     /$type<server|client>/:name/:group/:chart/socket        controllers.Application.getSocket(type: String, name: String, group: String, chart: String)
 
+GET     /finish                                                 controllers.Application.finishChart(path: String)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

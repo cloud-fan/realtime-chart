@@ -6,6 +6,12 @@ import models.{Group, Chart, ComputerNode, RealTimeChart}
 import scala.concurrent.Future
 import play.api.libs.iteratee.{Concurrent, Enumerator, Iteratee}
 import play.api.libs.concurrent.Execution.Implicits._
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.io.File
+import play.api.Play.current
+import java.nio.file.{FileSystems, Files}
+import scala.sys.process._
 
 object Application extends Controller {
 
@@ -44,7 +50,7 @@ object Application extends Controller {
   }
 
   def initNodes(nodeType: String, names: String) = InitAction {
-    RealTimeChart.setNodes(names.split(",").map(ComputerNode(_)).toList, nodeType)
+    RealTimeChart.addNodes(names.split(",").map(ComputerNode(_, nodeType)).toList)
     success
   }
 
@@ -119,5 +125,29 @@ object Application extends Controller {
         case _: NoSuchElementException => error
       }
     }
+  }
+
+  def finishChart(path: String) = RuntimeAction {
+    val date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date)
+    val dataDir = s"$path/$date/data"
+    new File(dataDir).mkdirs()
+    RealTimeChart.generateTopology(dataDir)
+    RealTimeChart.generateDataFiles(dataDir)
+    prepareResult(s"$path/$date/")
+    success
+  }
+
+  private def prepareResult(destination: String) {
+    clearDir()
+    Files.copy(Play.resourceAsStream("public/result.zip").get, FileSystems.getDefault.getPath("/tmp/result.zip"))
+    Files.copy(Play.resourceAsStream("public/copy.sh").get, FileSystems.getDefault.getPath("/tmp/copy.sh"))
+    Seq("sh", "/tmp/copy.sh", destination).!
+    clearDir()
+  }
+
+  private def clearDir() {
+    "rm -f /tmp/result.zip".!
+    "rm -f /tmp/copy.sh".!
+    "rm -rf /tmp/result".!
   }
 }

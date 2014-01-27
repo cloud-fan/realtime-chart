@@ -7,7 +7,10 @@ function makeChart(title, yAxisTitle, pointsTotal, urlPrefix) {
     var timeInterval = 10000;
     var chart;
 
-    var yAxisValueSuffix = yAxisTitle.match(/^\w+\s\((.+)\)$/)[1];
+    var yAxisValueSuffix = " ";
+    var match = yAxisTitle.match(/\s\((.+)\)$/);
+    if (match != null)
+        yAxisValueSuffix = match[1];
     var nodeName = urlPrefix.match(/^\/(?:server|client)\/(\w+)/)[1];
     var chartName = urlPrefix.match(/(\w+)\/$/)[1]
 
