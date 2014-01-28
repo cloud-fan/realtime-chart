@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.io.File
 import play.api.Play.current
-import java.nio.file.{FileSystems, Files}
+import java.nio.file.{Paths, Files}
 import scala.sys.process._
 
 object Application extends Controller {
@@ -56,13 +56,13 @@ object Application extends Controller {
 
   def initGroups(nodeType: String, name: String, groups: String) = InitAction {
     handleNone {
-      RealTimeChart.getNode(name, nodeType).setGroups(groups.split(",").map(Group(_)).toList)
+      RealTimeChart.getNode(name, nodeType).setGroups(groups.split(",").map(Group).toList)
     }
   }
 
   def initCharts(nodeType: String, name: String, group: String, charts: String) = InitAction {
     handleNone {
-      RealTimeChart.getNode(name, nodeType).getGroup(group).setCharts(charts.split(",").map(Chart(_)).toList)
+      RealTimeChart.getNode(name, nodeType).getGroup(group).setCharts(charts.split(",").map(Chart).toList)
     }
   }
 
@@ -139,8 +139,8 @@ object Application extends Controller {
 
   private def prepareResult(destination: String) {
     clearDir()
-    Files.copy(Play.resourceAsStream("public/result.zip").get, FileSystems.getDefault.getPath("/tmp/result.zip"))
-    Files.copy(Play.resourceAsStream("public/copy.sh").get, FileSystems.getDefault.getPath("/tmp/copy.sh"))
+    Files.copy(Play.resourceAsStream("public/result.zip").get, Paths.get("/tmp/result.zip"))
+    Files.copy(Play.resourceAsStream("public/copy.sh").get, Paths.get("/tmp/copy.sh"))
     Seq("sh", "/tmp/copy.sh", destination).!
     clearDir()
   }

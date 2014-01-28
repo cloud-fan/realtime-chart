@@ -6,7 +6,7 @@ import java.util.Date
 import scala.collection.mutable
 import play.api.libs.iteratee.Concurrent.Channel
 import scala.xml.XML
-import java.nio.file.{FileSystems, Files}
+import java.nio.file.{Paths, Files}
 import java.nio.charset.Charset
 
 /**
@@ -172,12 +172,19 @@ case class Chart(name: String) {
   }
 
   def writeCSV(dataDir: String, nodeType: String, node: String, group: String) {
-    val path = FileSystems.getDefault.getPath(dataDir).resolve(nodeType + "-" + node + "-" + group + "-" + name + ".csv")
+    val path = Paths.get(dataDir).resolve(nodeType + "-" + node + "-" + group + "-" + name + ".csv")
     val bw = Files.newBufferedWriter(path, Charset.defaultCharset())
-    bw.write(series.mkString(",") + "\n")
-    bw.write(dateTimes.mkString(",") + "\n")
-    pointsForAllSeries.foreach((data) => bw.write(data.mkString(",") + "\n"))
-    bw.close()
+    try {
+      bw.write(series.mkString(","))
+      bw.newLine()
+      bw.write(dateTimes.mkString(","))
+      bw.newLine()
+      pointsForAllSeries.foreach((data) => {
+        bw.write(data.mkString(","))
+        bw.newLine()
+      })
+    } finally
+      bw.close()
   }
 }
 
