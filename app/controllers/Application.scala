@@ -130,24 +130,23 @@ object Application extends Controller {
   def finishChart(path: String) = RuntimeAction {
     val date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date)
     val dataDir = s"$path/$date/data"
-    new File(dataDir).mkdirs()
+    prepareResult(s"$path/$date/")
+    Files.createDirectory(Paths.get(dataDir))
     RealTimeChart.generateTopology(dataDir)
     RealTimeChart.generateDataFiles(dataDir)
-    prepareResult(s"$path/$date/")
     success
   }
 
   private def prepareResult(destination: String) {
     clearDir()
     Files.copy(Play.resourceAsStream("public/result.zip").get, Paths.get("/tmp/result.zip"))
-    Files.copy(Play.resourceAsStream("public/copy.sh").get, Paths.get("/tmp/copy.sh"))
-    Seq("sh", "/tmp/copy.sh", destination).!
+    Seq("unzip", "-q", "/tmp/result.zip", "-d", "/tmp").!
+    Files.move(Paths.get("/tmp/result"), Paths.get(destination))
     clearDir()
   }
 
   private def clearDir() {
     "rm -f /tmp/result.zip".!
-    "rm -f /tmp/copy.sh".!
     "rm -rf /tmp/result".!
   }
 }
