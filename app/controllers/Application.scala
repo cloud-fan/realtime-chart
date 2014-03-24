@@ -129,9 +129,8 @@ object Application extends Controller {
   }
 
   def finishChart(path: String) = RuntimeAction {
-    val date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date)
-    val dataDir = s"$path/$date/data"
-    prepareResult(s"$path/$date/")
+    val dataDir = s"$path/data"
+    prepareResult(path)
     Files.createDirectory(Paths.get(dataDir))
     RealTimeChart.generateTopology(dataDir)
     RealTimeChart.generateDataFiles(dataDir)

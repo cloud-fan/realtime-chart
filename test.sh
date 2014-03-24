@@ -74,4 +74,5 @@ curl "http://localhost:9000/server/lab105/system/cpu/ingest?data=89.8,78.4,79.7,
 curl "http://localhost:9000/server/lab105/system/mem/ingest?data=96.2,3.2,4.3,8.8"
 sleep 3
 
-curl "http://localhost:9000/finish?path=%2fvar%2fwww"
+rm -rf /var/www/test
+curl "http://localhost:9000/finish?path=%2fvar%2fwww%2ftest"
