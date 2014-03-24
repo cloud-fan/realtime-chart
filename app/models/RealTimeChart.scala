@@ -208,6 +208,10 @@ object RealTimeChart {
 
   def getClientNames = getNodeNamesByNodeType("client")
 
+  def isReady = {
+    readyInfo == "" || readyInfo == "clients"
+  }
+
   def readyInfo = {
     if (getNodesByNodeType("server") == Nil)
       "servers"
@@ -217,7 +221,6 @@ object RealTimeChart {
         case info => info
       }
     }
-
   }
 
   def generateTopology(dataDir: String) {

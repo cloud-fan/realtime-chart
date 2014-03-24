@@ -8,7 +8,6 @@ import play.api.libs.iteratee.{Concurrent, Enumerator, Iteratee}
 import play.api.libs.concurrent.Execution.Implicits._
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.io.File
 import play.api.Play.current
 import java.nio.file.{Paths, Files}
 import scala.sys.process._
@@ -29,7 +28,7 @@ object Application extends Controller {
 
   object RuntimeAction extends ActionBuilder[Request] {
     def invokeBlock[A](request: Request[A], block: (Request[A]) => Future[SimpleResult]) = {
-      if (RealTimeChart.readyInfo == "" || RealTimeChart.readyInfo == "clients")
+      if (RealTimeChart.isReady)
         block(request)
       else
         Future.successful(Ok(views.html.error(RealTimeChart.readyInfo)))
@@ -112,7 +111,7 @@ object Application extends Controller {
 
   def getSocket(nodeType: String, name: String, group: String, chart: String) = WebSocket.using[String] {request =>
     val error = (Iteratee.consume[String](), Enumerator.eof[String])
-    if (RealTimeChart.readyInfo != "")
+    if (!RealTimeChart.isReady)
       error
     else {
       try {
