@@ -84,7 +84,8 @@ object Application extends Controller {
       val node = RealTimeChart.getNode(name, nodeType)
       val theGroup = node.getGroup(group)
       val urlPrefix = s"/$nodeType/"
-      Ok(views.html.charts(node.getGroupNames, group, urlPrefix + name + '/', theGroup.getCharts, pointsTotal))
+      Ok(views.html.charts(node.getGroupNames, group, urlPrefix + name + '/', theGroup.getCharts,
+        if (pointsTotal > 100) 100 else pointsTotal))
     } catch {
       case _: NoSuchElementException => error
     }
