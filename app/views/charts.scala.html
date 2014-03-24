@@ -52,7 +52,7 @@ $(function() {
         this.value = this.value.replace(/[^0-9\.]/g,'')
         if (this.value != "") {
             var count = parseInt(this.value)
-            if(count > 100) count = 100
+            if(count > @Application.pointsMax) count = @Application.pointsMax
             this.value = count
         }
     })

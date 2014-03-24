@@ -16,6 +16,7 @@ object Application extends Controller {
 
   val success = Ok("success\n")
   val error = BadRequest("error\n")
+  val pointsMax = 100
 
   object InitAction extends ActionBuilder[Request] {
     def invokeBlock[A](request: Request[A], block: (Request[A]) => Future[SimpleResult]) = {
@@ -85,7 +86,7 @@ object Application extends Controller {
       val theGroup = node.getGroup(group)
       val urlPrefix = s"/$nodeType/"
       Ok(views.html.charts(node.getGroupNames, group, urlPrefix + name + '/', theGroup.getCharts,
-        if (pointsTotal > 100) 100 else pointsTotal))
+        if (pointsTotal > pointsMax) pointsMax else pointsTotal))
     } catch {
       case _: NoSuchElementException => error
     }
