@@ -49,8 +49,15 @@ function makeChart (chartDom, title, yAxisTitle, dataFile) {
                 type: 'all',
                 text: 'All'
             }],
-            inputDateFormat: '%H:%M:%S',
-            inputEditDateFormat: '%H %M %S',
+            inputBoxWidth: 130,
+            inputDateFormat: '%Y-%m-%d %H:%M:%S',
+            inputEditDateFormat: '%Y-%m-%d %H:%M:%S',
+            inputDateParser: function(value) {
+                var tmp = value.split(" ")
+                var date = tmp[0].split("-")
+                var time = tmp[1].split(":")
+                return Date.UTC(date[0], date[1] - 1, date[2], time[0], time[1], time[2])
+            },
             inputPosition: {
                 align: "center"
             },
