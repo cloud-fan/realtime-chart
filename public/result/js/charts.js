@@ -102,10 +102,7 @@ function makeChart (chartDom, title, yAxisTitle, dataFile) {
         for(var i=0;i<pointsCount;i++) {
             var yList = data[i].split(",")
             for(var j=0;j<seriesCount;j++) {
-                seriesArray[j]["data"].push({
-                    x:new Date(dateTimes[i]).getTime(),
-                    y:parseFloat(yList[j])
-                })
+                seriesArray[j]["data"].push([new Date(dateTimes[i]).getTime(), parseFloat(yList[j])])
             }
         }
         return seriesArray
