@@ -6,8 +6,6 @@ import models.{Group, Chart, ComputerNode, RealTimeChart}
 import scala.concurrent.Future
 import play.api.libs.iteratee.{Concurrent, Enumerator, Iteratee}
 import play.api.libs.concurrent.Execution.Implicits._
-import java.text.SimpleDateFormat
-import java.util.Date
 import play.api.Play.current
 import java.nio.file.{Paths, Files}
 import scala.sys.process._
