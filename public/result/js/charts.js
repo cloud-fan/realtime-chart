@@ -3,7 +3,7 @@ function makeChart (chartDom, title, yAxisTitle, dataFile) {
         global: {
             useUTC: false
         }
-    });
+    })
 
     var nodeName = dataFile.split("-")[1]
     var yAxisValueSuffix = " "
@@ -36,7 +36,7 @@ function makeChart (chartDom, title, yAxisTitle, dataFile) {
                     menuItems: null,
                     text: "export",
                     onclick: function() {
-                        this.exportChart();
+                        this.exportChart()
                     }
                 }
             }
@@ -81,11 +81,11 @@ function makeChart (chartDom, title, yAxisTitle, dataFile) {
             shared: true,
             shadow: false,
             formatter: function() {
-                var s = Highcharts.dateFormat('%H:%M:%S', this.x);
+                var s = Highcharts.dateFormat('%H:%M:%S', this.x)
                 $.each(this.points, function(i, point) {
-                    s += '<br/><b>'+ point.series.name +'</b>: '+ Highcharts.numberFormat(point.y) + " " + yAxisValueSuffix;
-                });
-                return s;
+                    s += '<br/><b>'+ point.series.name +'</b>: '+ Highcharts.numberFormat(point.y) + " " + yAxisValueSuffix
+                })
+                return s
             }
         },
         legend: {
@@ -100,13 +100,13 @@ function makeChart (chartDom, title, yAxisTitle, dataFile) {
 
     $.get("data/"+dataFile).done(function(data){
         var seriesArray = produceAllSeries(data)
-        for(var i=0;i<seriesArray.length;i++) {
+        for(var i = 0; i < seriesArray.length; i++) {
             options.series.push(seriesArray[i])
         }
         chartDom.highcharts('StockChart',options)
     })
 
-    function produceAllSeries (initData) {
+    function produceAllSeries(initData) {
         var data = initData.split("\n")
         var seriesNames = data[0].split(",")
         var dateTimes = data[1].split(",")
@@ -114,15 +114,15 @@ function makeChart (chartDom, title, yAxisTitle, dataFile) {
         var seriesCount = seriesNames.length
         var pointsCount = dateTimes.length
         var seriesArray = new Array(seriesCount)
-        for(var i=0;i<seriesCount;i++) {
+        for(var i = 0; i < seriesCount; i++) {
             seriesArray[i] = {}
             seriesArray[i]["name"] = seriesNames[i]
             seriesArray[i]["data"] = []
         }
-        for(var i=0;i<pointsCount;i++) {
+        for(var i = 0; i < pointsCount; i++) {
             var yList = data[i].split(",")
             for(var j=0;j<seriesCount;j++) {
-                seriesArray[j]["data"].push([new Date(dateTimes[i]).getTime(), parseFloat(yList[j])])
+                seriesArray[j]["data"].push([Number(dateTimes[i]), parseFloat(yList[j])])
             }
         }
         return seriesArray

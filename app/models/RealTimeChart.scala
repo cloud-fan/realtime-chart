@@ -105,8 +105,6 @@ case class Group(name: String) {
 
 case class Chart(name: String) {
 
-  private val df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-
   private var _series: List[String] = Nil
 
   def series = _series
@@ -123,7 +121,7 @@ case class Chart(name: String) {
 
   def isEmpty = dateTimes.length == 0
 
-  private val dateTimes = new ArrayBuffer[String]()
+  private val dateTimes = new ArrayBuffer[Long]()
   private val pointsForAllSeries = new ArrayBuffer[Array[String]]()
 
   private val channels = new mutable.HashSet[Channel[String]]()
@@ -152,14 +150,14 @@ case class Chart(name: String) {
   }
 
   def addPoints(points: Array[String]) {
-    val x = df.format(new Date)
+    val x = System.currentTimeMillis()
     dateTimes += x
     pointsForAllSeries += points
     channels.foreach(_.push(x + "#" + points.mkString(",")))
   }
 
   def lastNPointsToString(n: Int) = if (dateTimes.length == 0)
-    "!" + df.format(new Date) + "#" + series.mkString("#")
+    "!" + System.currentTimeMillis() + "#" + series.mkString("#")
   else {
     val dropValue = dateTimes.length - n
     series.mkString("#") + "\n" +
