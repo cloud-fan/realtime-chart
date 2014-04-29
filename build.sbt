@@ -8,6 +8,8 @@ libraryDependencies ++= Seq(
   cache
 )
 
+libraryDependencies += "org.jfree" % "jfreechart" % "1.0.17"
+
 play.Project.playScalaSettings
 
 val zipResult = taskKey[Unit]("zip the result html files")

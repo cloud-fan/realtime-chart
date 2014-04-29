@@ -6,11 +6,16 @@
     <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-theme.min.css">
     <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/layer/layer.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="highstock/highstock.js"></script>
-    <script type="text/javascript" src="highstock/modules/exporting.js"></script>
     <script type="text/javascript" src="js/charts.js"></script>
 </head>
+<style type="text/css">
+#charts{display: none}
+#layer{display: none}
+body{padding-top: 20px}
+</style>
 <body>
 <div id="nodes">
     <h2 class="text-center">Servers:</h2>
@@ -28,20 +33,20 @@
 </div>
 
 <div id="charts">
-    <div class="row">
-        <div class="col-md-2">
-            <ul class="list-group" id="groups"></ul>
-        </div>
-        <div class="col-md-10"><div id="chart"></div></div>
-    </div>
+    <h1 class="text-center" id="top">System Metrics Charts</h1>
+    <div id="nav" style="text-align: center; margin-bottom: 20px; margin-top: 20px"></div>
 </div>
 
+<div id="popup"></div>
+
 <script type="text/javascript">
-$(function () {
+$(function() {
+    $.get("data/topology.xml", function(data) {
+        initNodes("server", data)
+        initNodes("client", data)
+    })
 
-    $("#charts").hide()
-
-    function initNodes (nodeType, data) {
+    function initNodes(nodeType, data) {
         var nodesXml = $(data).find(nodeType)
         var nodesDom = $("#" + nodeType)
         nodesXml.find("node").each(function() {
@@ -50,33 +55,40 @@ $(function () {
             nodeDom.click(function() {
                 nodeXml.find("group").each(function() {
                     var groupXml = $(this)
-                    var groupDom = $('<li class="list-group-item"><h4>' + groupXml.attr("name") +
-                        '</h4><ul class="list-group" style="margin-bottom:0"></ul></li>')
+                    var groupName = groupXml.attr('name')
+                    var groupDom = $('<div><h2 id="'+groupName+'">'+groupName+'<small><a href="#top" style="margin-left:20px">go top</a></small></h2></div>')
+                    $('#nav').append($('<a href="#'+groupName+'" class="btn btn-info" style="margin-right:10px">'+groupName+'</a>'))
                     groupXml.find("chart").each(function() {
                         var chartXml = $(this)
-                        var chartDom = $('<li class="list-group-item chart"><span style="cursor:default">' + chartXml.attr("name") + '</span></li>')
+                        var chartFileName = nodeType + '-' + nodeXml.attr('name') + '-' + groupName + '-' + chartXml.attr('name')
+                        var chartDom = $('<img src="images/' + chartFileName + '.png"></img>')
                         chartDom.click(function() {
-                            $(".chart").removeClass("active")
-                            makeChart($("#chart"), chartXml.attr("title"), chartXml.attr("yAxisTitle"), nodeType + "-" +
-                                nodeXml.attr("name") + "-" + groupXml.attr("name") + "-" + chartXml.attr("name") + ".csv")
-                            chartDom.addClass("active")
+                            var popup = $('#popup')
+                            popup.children().remove()
+                            popup.append($('<div id="chart" style="width: 900px;height: 600px"></div>'))
+                            $.layer({
+                                type: 1,
+                                area: ['900px', '600px'],
+                                title: false,
+                                border: [0],
+                                page: {dom: '#popup'},
+                                offset: ['50%' , '50%']
+                            })
+                            makeChart($("#chart"), chartXml.attr("title"), chartXml.attr("yAxisTitle"), chartFileName + ".csv")
                         })
-                        groupDom.children("ul").append(chartDom)
+                        groupDom.append(chartDom)
                     })
-                    $("#groups").append(groupDom)
+                    groupDom.append($('<hr />'))
+                    $("#charts").append(groupDom)
                 })
-                $("#nodes").hide()
+                $("#nodes").remove()
                 $("#charts").show()
             })
             nodesDom.append(nodeDom)
         })
     }
-
-    $.get("data/topology.xml", function(data) {
-        initNodes("server", data)
-        initNodes("client", data)
-    })
 })
+
 </script>
 </body>
 </html>

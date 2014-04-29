@@ -1,13 +1,15 @@
 package models
 
 import scala.collection.mutable.ArrayBuffer
-import java.text.SimpleDateFormat
-import java.util.Date
 import scala.collection.mutable
 import play.api.libs.iteratee.Concurrent.Channel
 import scala.xml.XML
 import java.nio.file.{Paths, Files}
 import java.nio.charset.Charset
+import org.jfree.chart.{ChartUtilities, ChartFactory}
+import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
+import java.io.File
 
 /**
  * Created by cloud on 1/21/14.
@@ -66,6 +68,11 @@ case class ComputerNode(name: String, nodeType: String) {
     for (group <- groups.elements)
       group.writeCSV(dataDir, nodeType, name)
   }
+  
+  def saveImages(imageDir: String) {
+    for (group <- groups.elements)
+      group.saveImages(imageDir, nodeType, name)
+  }
 }
 
 case class Group(name: String) {
@@ -101,6 +108,11 @@ case class Group(name: String) {
     for (chart <- charts.elements if !chart.isEmpty)
       chart.writeCSV(dataDir, nodeType, node, name)
   }
+
+  def saveImages(imageDir: String, nodeType: String, node: String) {
+    for (chart <- charts.elements if !chart.isEmpty)
+      chart.saveImages(imageDir, nodeType, node, name)
+  }
 }
 
 case class Chart(name: String) {
@@ -122,7 +134,7 @@ case class Chart(name: String) {
   def isEmpty = dateTimes.length == 0
 
   private val dateTimes = new ArrayBuffer[Long]()
-  private val pointsForAllSeries = new ArrayBuffer[Array[String]]()
+  private val pointsForAllSeries = new ArrayBuffer[Array[Double]]()
 
   private val channels = new mutable.HashSet[Channel[String]]()
 
@@ -149,7 +161,7 @@ case class Chart(name: String) {
     this
   }
 
-  def addPoints(points: Array[String]) {
+  def addPoints(points: Array[Double]) {
     val x = System.currentTimeMillis()
     dateTimes += x
     pointsForAllSeries += points
@@ -183,6 +195,22 @@ case class Chart(name: String) {
       })
     } finally
       bw.close()
+  }
+
+  def saveImages(imageDir: String, nodeType: String, node: String, group: String) {
+    val xySeries = series.map( s => new XYSeries(s))
+    (0 until pointsForAllSeries.size).foreach { pointsIndex =>
+      (0 until xySeries.size).foreach { seriesIndex =>
+        xySeries(seriesIndex).add(pointsIndex, pointsForAllSeries(pointsIndex)(seriesIndex), false)
+      }
+    }
+    val data = new XYSeriesCollection()
+    xySeries.foreach(data.addSeries)
+    val chart = ChartFactory.createXYLineChart(name, null, yAxisTitle, data)
+    val render = new XYLineAndShapeRenderer()
+    render.setBaseShapesVisible(false)
+    chart.getXYPlot.setRenderer(render)
+    ChartUtilities.saveChartAsPNG(new File(imageDir, nodeType + "-" + node + "-" + group + "-" + name + ".png"), chart, 600, 400)
   }
 }
 
@@ -241,5 +269,10 @@ object RealTimeChart {
   def generateDataFiles(dataDir: String) {
     for (node <- nodes.elements)
       node.writeCSV(dataDir)
+  }
+
+  def generateStaticImages(imageDir: String) {
+    for (node <- nodes.elements)
+      node.saveImages(imageDir)
   }
 }

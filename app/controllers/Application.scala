@@ -74,7 +74,7 @@ object Application extends Controller {
 
   def ingestData(nodeType: String, name: String, group: String, chart: String, data: String) = RuntimeAction {
     handleNone {
-      RealTimeChart.getNode(name, nodeType).getGroup(group).getChart(chart).addPoints(data.split(","))
+      RealTimeChart.getNode(name, nodeType).getGroup(group).getChart(chart).addPoints(data.split(",").map(_.toDouble))
     }
   }
 
@@ -128,10 +128,13 @@ object Application extends Controller {
 
   def finishChart(path: String) = RuntimeAction {
     val dataDir = s"$path/data"
+    val imageDir = s"$path/images"
     prepareResult(path)
     Files.createDirectory(Paths.get(dataDir))
+    Files.createDirectory(Paths.get(imageDir))
     RealTimeChart.generateTopology(dataDir)
     RealTimeChart.generateDataFiles(dataDir)
+    RealTimeChart.generateStaticImages(imageDir)
     success
   }
 

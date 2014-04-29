@@ -28,19 +28,6 @@ function makeChart (chartDom, title, yAxisTitle, dataFile) {
                 text: yAxisTitle
             }
         },
-        exporting: {
-            buttons: {
-                contextButton: {
-                    x: -80,
-                    y: 10,
-                    menuItems: null,
-                    text: "export",
-                    onclick: function() {
-                        this.exportChart()
-                    }
-                }
-            }
-        },
         rangeSelector: {
             buttons: [{
                 type: 'minute',
