@@ -78,12 +78,13 @@ object Application extends Controller {
     }
   }
 
-  def showGroupCharts(nodeType: String, name: String, group: String, pointsTotal: Int) = RuntimeAction {
+  def showChart(nodeType: String, name: String, group: String, chart: String, pointsTotal: Int) = RuntimeAction {
     try {
       val node = RealTimeChart.getNode(name, nodeType)
       val theGroup = node.getGroup(group)
+      val theChart = theGroup.getChart(chart)
       val urlPrefix = s"/$nodeType/"
-      Ok(views.html.charts(node.getGroupNames, group, urlPrefix + name + '/', theGroup.getCharts,
+      Ok(views.html.charts(node.getGroups, theGroup, theChart, urlPrefix + name + '/',
         if (pointsTotal > pointsMax) pointsMax else pointsTotal))
     } catch {
       case _: NoSuchElementException => error
@@ -93,9 +94,10 @@ object Application extends Controller {
   def showNodeIndex(nodeType: String, name: String) = RuntimeAction {
     try {
       val node = RealTimeChart.getNode(name, nodeType)
-      val theGroup = node.getFirstGroup
+      val theGroup = node.getGroups.head
+      val theChart = theGroup.getCharts.head
       val urlPrefix = s"/$nodeType/"
-      Ok(views.html.charts(node.getGroupNames, theGroup.name, urlPrefix + name + '/', theGroup.getCharts, 20))
+      Ok(views.html.charts(node.getGroups, theGroup, theChart, urlPrefix + name + '/', 20))
     } catch {
       case _: NoSuchElementException => error
     }

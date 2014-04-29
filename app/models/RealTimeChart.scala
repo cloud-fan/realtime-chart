@@ -25,8 +25,6 @@ class MyContainer[A <: {def name : String; def readyInfo : String}] {
 
   def getElementByName(name: String) = elements.find(_.name == name).get
 
-  def getElementNames = elements.map(_.name)
-
   def readyInfo = {
     if (elements == Nil)
       " "
@@ -45,9 +43,7 @@ case class ComputerNode(name: String, nodeType: String) {
 
   def getGroup(name: String) = this.groups.getElementByName(name)
 
-  def getGroupNames = this.groups.getElementNames
-
-  def getFirstGroup = this.groups.elements.head
+  def getGroups = this.groups.elements
 
   def readyInfo = {
     this.groups.readyInfo match {
