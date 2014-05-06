@@ -133,7 +133,6 @@ object Application extends Controller {
     val imageDir = s"$path/images"
     prepareResult(path)
     Files.createDirectory(Paths.get(dataDir))
-    Files.createDirectory(Paths.get(imageDir))
     RealTimeChart.generateTopology(dataDir)
     RealTimeChart.generateDataFiles(dataDir)
     RealTimeChart.generateStaticImages(imageDir)

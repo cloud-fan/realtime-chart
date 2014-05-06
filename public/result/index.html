@@ -12,11 +12,17 @@
     <script type="text/javascript" src="js/charts.js"></script>
 </head>
 <style type="text/css">
-#charts{display: none}
-#layer{display: none}
-body{padding-top: 20px}
+#charts {display: none}
+#layer {display: none}
+body {padding-top: 20px}
+#back-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: none;
+}
 </style>
-<body>
+<body id="body">
 <div id="nodes">
     <h2 class="text-center">Servers:</h2>
     <div style="text-align: center;">
@@ -33,10 +39,10 @@ body{padding-top: 20px}
 </div>
 
 <div id="charts">
-    <h1 class="text-center" id="top">System Metrics Charts</h1>
+    <h1 class="text-center">System Metrics Charts</h1>
     <div id="nav" style="text-align: center; margin-bottom: 20px; margin-top: 20px"></div>
 </div>
-
+<a id="back-top" href="#body"><img src="images/up-arrow.png" style="width: 80px; height: 80px" alt="back to top" /></a>
 <div id="popup"></div>
 
 <script type="text/javascript">
@@ -56,7 +62,7 @@ $(function() {
                 nodeXml.find("group").each(function() {
                     var groupXml = $(this)
                     var groupName = groupXml.attr('name')
-                    var groupDom = $('<div><h2 id="'+groupName+'">'+groupName+'<small><a href="#top" style="margin-left:20px">go top</a></small></h2></div>')
+                    var groupDom = $('<div><h2 id="'+groupName+'">'+groupName+'</h2></div>')
                     $('#nav').append($('<a href="#'+groupName+'" class="btn btn-info" style="margin-right:10px">'+groupName+'</a>'))
                     groupXml.find("chart").each(function() {
                         var chartXml = $(this)
@@ -83,6 +89,13 @@ $(function() {
                 })
                 $("#nodes").remove()
                 $("#charts").show()
+                $(window).scroll(function () {
+                    if ($(this).scrollTop() > 100) {
+                        $('#back-top').fadeIn()
+                    } else {
+                        $('#back-top').fadeOut()
+                    }
+                })
             })
             nodesDom.append(nodeDom)
         })
